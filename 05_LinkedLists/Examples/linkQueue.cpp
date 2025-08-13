@@ -91,6 +91,8 @@ class LinkQueueApp {
 
             theQueue->remove();
             theQueue->remove();
+            theQueue->remove();
+            theQueue->remove();
 
             theQueue->displayQueue();
         }

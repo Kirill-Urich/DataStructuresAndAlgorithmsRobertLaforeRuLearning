@@ -18,10 +18,6 @@
                 "${fileDirname}/build/${fileBasenameNoExtension}",
                 "&&",
                 "${fileDirname}/build/${fileBasenameNoExtension}",
-                // "-o",
-                // "${fileDirname}/build/${fileBasenameNoExtension}",
-                // "&&",
-                // "${fileDirname}/build/${fileBasenameNoExtension}"
             ],
             "group": {
                 "kind": "build",

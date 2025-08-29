@@ -5,20 +5,22 @@
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",
       "request": "launch",
+      "program": "${worspaceFolder}/build/${fileBasenameNoExtension}",
       "args": [],
       "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
       "externalConsole": false,
-      "cwd": "/home/user/Programming/DataStructuresAndAlgorithmsRobertLaforeRu_Learning/05_LinkedLists/Projects",
-      "program": "/home/user/Programming/DataStructuresAndAlgorithmsRobertLaforeRu_Learning/05_LinkedLists/Projects/build/Debug/outDebug",
       "MIMode": "gdb",
-      "miDebuggerPath": "gdb",
+      // "miDebuggerPath": "gdb",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",
           "text": "-enable-pretty-printing",
           "ignoreFailures": true
         }
-      ]
+      ],
+      "preLaunchTask": "build",
+      "miDebuggerPath": "/usr/bin/gdb"
     }
   ]
 }

@@ -1,18 +1,23 @@
-// tree.cpp
-// Работа с двоичным деревом
+// hashChain.cpp
+// Реализация хеш-таблицы с использованием метода цепочек
 
 #include <iostream>
+#include <experimental/random>
 using namespace std;
 
 class Node {
     public:
         int iData;
-        double dData;
         Node* leftChild = nullptr;
         Node* rightChild = nullptr;
     public:
+        Node() = default;
+        Node(int it) : iData(it) {}
+        int getKey() {
+            return iData;
+        }
         void displayNode() {
-            cout << "{" << iData << ", " << dData << "} ";
+            cout << iData << " ";
         }
 };
 
@@ -101,10 +106,9 @@ class Tree {
             }
             return current;
         }
-        void insert(int id, double dd) {
+        void insert(int id) {
             Node* newNode = new Node();
             newNode->iData = id;
-            newNode->dData = dd;
             if (root == nullptr)
                 root = newNode;
             else {
@@ -119,13 +123,14 @@ class Tree {
                             return;
                         }
                     }
-                    else {
+                    else if (id > current->iData){
                         current = current->rightChild;
                         if (current == nullptr) {
                             parent->rightChild = newNode;
                             return;
                         }
-                    }
+                    } else
+                        return;
                 }
             }
         }
@@ -232,75 +237,100 @@ class Tree {
         }
 };
 
-class TreeApp {
+class HashTable {
+    private:
+        Tree** hashArray;
+        int arraySize;
+    public:
+        HashTable(int size) {
+            arraySize = size;
+            hashArray = new Tree*[arraySize];
+            for (int j = 0; j < arraySize; j++)
+                hashArray[j] = new Tree();
+        }
+        void displayTable() {
+            for (int j = 0; j < arraySize; j++) {
+                cout << j << ". ";
+                hashArray[j]->displayTree();
+            }
+        }
+        int hashFunc(int key) {
+            return key % arraySize;
+        }
+        void insert(Node* theNode) {
+            int key = theNode->getKey();
+            int hashVal = hashFunc(key);
+            hashArray[hashVal]->insert(key);
+        }
+        void Delete(int key) {
+            int hashVal = hashFunc(key);
+            hashArray[hashVal]->Delete(key);
+        }
+        Node* find(int key) {
+            int hashVal = hashFunc(key);
+            Node* theNode = hashArray[hashVal]->find(key);
+            return theNode;
+        }
+};
+
+class HashChainApp {
     public:
         static void main() {
-            int value;
-            Tree* theTree = new Tree();
-            theTree->insert(50, 1.5);
-            theTree->insert(25, 1.2);
-            theTree->insert(75, 1.7);        
-            theTree->insert(12, 1.5);
-            theTree->insert(37, 1.2);
-            theTree->insert(43, 1.7);
-            theTree->insert(30, 1.5);
-            theTree->insert(33, 1.2);
-            theTree->insert(87, 1.7);
-            theTree->insert(93, 1.5);
-            theTree->insert(97, 1.5);
+            int aKey;
+            Node* aDataItem;
+            int size, n, keysPerCell = 100;
 
+            cout << "Enter size of hash table: ";
+            cin >> size;
+            cout << "Enter initial number of items: ";
+            cin >> n;
+
+            HashTable* theHashTable = new HashTable(size);
+
+            for (int j = 0; j < n; j++) {
+                aKey = experimental::randint(0, 100);
+                aDataItem = new Node(aKey);
+                theHashTable->insert(aDataItem);
+            }
+
+            char choice;
             while (true) {
-                cout << "Enter first letter of show, ";
-                cout << "insert, find, delete or traverse: ";
-                char choice;
+                cout << "Enter first letter of ";
+                cout << "show, insert, delete or find: ";
                 cin >> choice;
+
                 switch(choice) {
                     case 's':
-                        theTree->displayTree();
+                        theHashTable->displayTable();
                         break;
                     case 'i':
-                        cout << "Enter value to insert: ";
-                        cin >> value;
-                        theTree->insert(value, value + 0.9);
+                        cout << "Enter key value to insert: ";
+                        cin >> aKey;
+                        aDataItem = new Node(aKey);
+                        theHashTable->insert(aDataItem);
                         break;
-                    case 'f': {
-                            cout << "Enter value to find: ";
-                            cin >> value;
-                            Node* found = theTree->find(value);
-                            if (found != nullptr) {
-                                cout << "Found: ";
-                                found->displayNode();
-                                cout << "\n";
-                            } else
-                                cout << "This not is not exist.";
-                            break;
-                        }
-                    case 'd': {
-                        cout << "Enter value to delete: ";
-                        cin >> value;
-                        bool Deleted = theTree->Delete(value);
-                        if (Deleted)
-                            cout << value << " is deleted. ";
+                    case 'd':
+                        cout << "Enter key value to delete: ";
+                        cin >> aKey;
+                        theHashTable->Delete(aKey);
+                        break;
+                    case 'f':
+                        cout << "Enter key value to find: ";
+                        cin >> aKey;
+                        aDataItem = theHashTable->find(aKey);
+                        if (aDataItem != nullptr)
+                            cout << "Found " << aKey << endl;
                         else
-                            cout << "The " << value << " is not exist in the Tree";
-                        cout << "\n";
-                        }
-                        break;
-                    case 't':
-                        cout << "Enter 1, 2 or 3 to traverse the Tree \
-                                 \nto preOrder, inOrder or postOrder accordingly";
-                        cin >> value;
-                        theTree->traverse(value);
+                            cout << "Could not find " << aKey << endl;
                         break;
                     default:
-                        cout << "Try again\n";
-                        continue;
+                        cout << "Invalid entry\n";
                 }
             }
         }
 };
 
 int main() {
-    TreeApp::main();
+    HashChainApp::main();
     return 0;
 }
